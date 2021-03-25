@@ -1,0 +1,366 @@
+<!-- index.wxml -->
+<view class="page__header">
+  <!-- 输入框 -->
+  <view class="weui-search-bar">
+    <view class="weui-search-bar__form">
+      <view class="weui-search-bar__box">
+        <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
+        <input type="text" class="weui-search-bar__input" />
+        <view class="weui-icon-clear" wx:if="{{inputVal.length > 0}}">
+          <icon type="clear" size="14"></icon>
+        </view>
+      </view>
+      <label class="weui-search-bar__label" bindtap="go_search">
+        <icon class="weui-icon-search" type="search" size="12" color='#EDA8A3'></icon>
+        <view class="weui-search-bar__text">请输入歌手或歌曲名</view>
+      </label>
+    </view>
+    <view class="weui-search-bar__cancel-btn" hidden="{{!inputShowed}}" bindtap="hideInput">
+      取消
+    </view>
+  </view>
+</view>
+<!-- 个性推荐和主播电台头部 -->
+<view class='swiper_header'>
+  <view class='swiper_header_first' bindtap="changepage">个性推荐</view>
+  <view class='swiper_header_second' bindtap="changepage">主播电台</view>
+  <view class="weui-navbar-slider" style="transform:translateX({{slideOffset}}px);"></view>
+</view>
+<swiper class='Allswipew' bindchange="changeline" current="{{currentTab}}" >
+  <!-- 个性推荐swiper页面 -->
+  <swiper-item class="comment">
+
+    <block>
+      <!-- 个性推荐里面的轮播图 -->
+      <swiper indicator-dots="{{indicatorDots}}" indicator-color="{{indicatorcolor}}" indicator-active-color="{{indicatoractivecolor}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular="{{circular}}">
+
+        <block wx:for="{{banner}}" wx:key="">
+          <swiper-item class="swiper_item" data-id="{{item.targetId}}" bindtap='handlePlayAudio'> <!--点击之后获取到歌曲的ID存放到data-id -->
+            <image src='{{item.pic}}' class='banner' />
+          </swiper-item>
+        </block>
+      </swiper>
+    </block>
+
+    <!-- 推荐导航四大入口 -->
+    <view class='comment_container_box'>
+      <view class='comment_daily comment_box' bindtap="go_MV">
+        <view class='contaner_images'>
+          <image src='/images/MV.png' class='commentImage'></image>
+        </view>
+        <text class='comment_text'>推荐MV</text>
+      </view>
+      <view class='comment_private_FM comment_box'>
+        <view class='contaner_images' bindtap='go_songer'>
+          <image src='/images/songer.png' class='commentImage'></image>
+        </view>
+        <text class='comment_text'>歌手榜</text>
+      </view>
+      <view class='comment_songList comment_box' bindtap="go_songsheet">
+        <view class='contaner_images'>
+          <image src='/images/songList.png' class='commentImage'></image>
+        </view>
+        <text class='comment_text'>歌单</text>
+      </view>
+      <view class='comment_rank comment_box' bindtap='go_toplist'>
+        <view class='contaner_images'>
+          <image src='/images/rank.png' class='commentImage'></image>
+        </view>
+        <text class='comment_text'>榜单排行</text>
+      </view>
+    </view>
+       <!-- 最新音乐 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title' bindtap="go_newsong">最新音乐</text>
+      <view class='title_leader_box' bindtap="go_newsong">
+        <image src='/images/dayuhao.png' class='title_leader'></image>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{newsong_index}}" wx:key="" class='songsheet_item_box' data-id="{{item.id}}" bindtap='handlePlayAudio'>
+          <image src='{{item.song.album.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.name}}</text>
+          <text class='newsong_artists'>{{item.song.artists[0].name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 精选歌单 -->
+    <view class='songsheet_items_allbox'>
+      <text class='songsheet_container_title' bindtap="go_songsheet">精选歌单</text>
+      <view class='title_leader_box' bindtap="go_songsheet">
+        <image src='/images/dayuhao.png' class='title_leader'></image>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{songsheet_index}}" wx:key="" class='songsheet_item_box' data-id="{{item.id}}" bindtap='handleSheet'>
+          <image src='{{item.coverImgUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+ 
+
+    <!-- 推荐MV -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title' bindtap="go_mv">推荐MV</text>
+      <view class='title_leader_box' bindtap="go_mv">
+        <image src='/images/dayuhao.png' class='title_leader'></image>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_MV}}" wx:key="" class='songsheet_item_box recommend_mv' data-id="{{item.id}}" bindtap='handlePlayMv'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.name}}</text>
+          <text class='newsong_artists'>{{item.artistName}}</text>
+        </view>
+      </view>
+    </view>
+        <!-- 精选电台 -->
+    <view class='songsheet_items_allbox dj_allbox'>
+      <text class='songsheet_container_title' bindtap="go_dj">精选电台</text>
+      <view class='title_leader_box' bindtap="go_dj">
+        <image src='/images/dayuhao.png' class='title_leader'></image>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{dj_index}}" wx:key="" class='songsheet_item_box'  bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 最新专辑 -->
+    <view class='songsheet_items_allbox newsong_allbox newest_allbox '>
+      <text class='songsheet_container_title' bindtap="go_newest">最新专辑</text>
+      <view class='title_leader_box' bindtap="go_newest">
+        <image src='/images/dayuhao.png' class='title_leader'></image>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{newest}}" wx:key="" class='songsheet_item_box' data-id="{{item.id}}" bindtap='handlePlayAudio'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.name}}</text>
+          <text class='newsong_artists'>{{item.artist.name}}</text>
+        </view>
+      </view>
+    </view>
+  </swiper-item>
+  <!-- 主播电台页面 -->
+
+
+  
+  <swiper-item class="radio">
+    <block>
+      <!-- 主播电台轮播图 -->
+      <swiper indicator-dots="{{indicatorDots}}" indicator-color="{{indicatorcolor}}" indicator-active-color="{{indicatoractivecolor}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular="{{circular}}">
+        <block wx:for="{{djbanner}}" wx:key="">
+          <swiper-item class="swiper_item" data-id="{{item.targetId}}" bindtap='handlePlayAudio'>
+            <image src='{{item.pic}}' class='banner' />
+          </swiper-item>
+        </block>
+      </swiper>
+    </block>
+    <!-- 推荐导航四大入口 -->
+    <view class='comment_container_box'>
+      <view class='comment_private_FM comment_box' bindtap='go_djlist'>
+        <view class='contaner_images'>
+          <image src='/images/sort.png' class='commentImage'></image>
+        </view>
+        <text class='comment_text'>电台分类</text>
+      </view>
+      <view class='comment_daily comment_box' bindtap='go_program'>
+        <view class='contaner_images'>
+          <image src='/images/program.png' class='commentImage'></image>
+        </view>
+        <text class='comment_text'>推荐节目</text>
+      </view>
+      <view class='comment_songList comment_box' bindtap='go_pay'>
+        <view class='contaner_images'>
+          <image src='/images/fine.png' class='commentImage'></image>
+        </view>
+        <text class='comment_text'>付费精品</text>
+      </view>
+      <view class='comment_rank comment_box' bindtap='go_dj'>
+        <view class='contaner_images'>
+          <image src='/images/previent_FM.png' class='commentImage'></image>
+        </view>
+        <text class='comment_text'>精选电台</text>
+      </view>
+    </view>
+    <!-- 创作|翻唱 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[0].name}}</text>
+      <view class="changechange_box" bindtap="change_1" >
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_create}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 3D|电子 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[1].name}}</text>
+      <view class="changechange_box" bindtap="change_2">
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_3D}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 情感调频 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[2].name}}</text>
+      <view class="changechange_box" bindtap="change_3">
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_feeling}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 音乐故事 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[3].name}}</text>
+      <view class="changechange_box" bindtap="change_4">
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_musicstory}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 二次元 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[4].name}}</text>
+      <view class="changechange_box" bindtap="change_5">
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_2D}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 有声书 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[5].name}}</text>
+      <view class="changechange_box" bindtap="change_6">
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_audiobook}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 广播剧 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[6].name}}</text>
+      <view class="changechange_box" bindtap="change_7">
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_radioplay}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 美文读物 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[7].name}}</text>
+      <view class="changechange_box" bindtap="change_8">
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_reading}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 相声曲艺 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[8].name}}</text>
+      <view class="changechange_box" bindtap="change_9">
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_crosstalk}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 人文历史 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[9].name}}</text>
+      <view class="changechange_box" bindtap="change_10">
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_history}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 脱口秀 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[10].name}}</text>
+      <view class="changechange_box" bindtap="change_11">
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_talkshow}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 娱乐|影视 -->
+    <view class='songsheet_items_allbox newsong_allbox'>
+      <text class='songsheet_container_title'>{{catelist[11].name}}</text>
+      <view class="changechange_box" bindtap="change_12">
+        <image src="../../images/changechange.png" class="title_leader changechange"></image>
+        <text class="changechangetext">换一换</text>
+      </view>
+      <view class='songsheet_items_box'>
+        <view wx:for="{{recommend_movies}}" wx:key="" class='songsheet_item_box' bindtap='handlePlayDj'>
+          <image src='{{item.picUrl}}' class="songsheet_container_image"></image>
+          <text class='songsheet_container_text newsong_songname'>{{item.rcmdtext}}</text>
+          <text class='newsong_artists'>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+  </swiper-item>
+</swiper>

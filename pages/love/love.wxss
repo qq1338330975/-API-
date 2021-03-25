@@ -1,0 +1,17 @@
+/* pages/love/love.wxss */
+@import '../../play/play.wxss';
+
+
+/* .play_suspend{
+    margin-top:-10px;
+}
+.sing-show{
+    height:75%;
+} */
+
+view .sing-show{
+    height: 63%;
+}
+.sing-show .coverImg{
+    top: 23%;
+}
